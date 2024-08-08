@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: 'tistory'
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://133.186.241.167:3306/nhn_academy_264
+    username: nhn_academy_264
+    password: yV6aeany!
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+
