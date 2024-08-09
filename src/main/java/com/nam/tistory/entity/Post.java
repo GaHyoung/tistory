@@ -2,6 +2,7 @@ package com.nam.tistory.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,4 +40,14 @@ public class Post {
     @JoinColumn(name = "blog_id", nullable = false)
     private Blog blog;
 
+    @Builder
+    public Post(Long postId, String title, String content, Category category, LocalDateTime createdAt, User user, Blog blog) {
+        this.postId = postId;
+        this.title = title;
+        this.content = content;
+        this.category = category;
+        this.createdAt = LocalDateTime.now();
+        this.user = user;
+        this.blog = blog;
+    }
 }

@@ -16,7 +16,7 @@ public class Blog {
     @Column(name = "blog_id")
     private Long blogId;
 
-    @Column(name = "blog_name", length = 50)
+    @Column(name = "blog_name", length = 50, unique = true)
     private String blogName;
 
     @Column(name = "open_status")

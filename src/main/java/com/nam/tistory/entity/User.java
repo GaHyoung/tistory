@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,7 +29,7 @@ public class User {
     private String userPassword;
 
     @Column(name = "user_birth", length = 8, nullable = false)
-    private String userBirth;
+    private LocalDate userBirth;
 
     @Column(name = "create_at", nullable = false)
     private LocalDateTime createdAt;
@@ -40,13 +41,15 @@ public class User {
     private String userImage;
 
     @Builder
-    public User(String userName, String userEmail, String userPassword, String userBirth, LocalDateTime latestLoginAt, String userImage) {
+    public User(Long userId, String userName, String userEmail, String userPassword, LocalDate userBirth, LocalDateTime createdAt, LocalDateTime latestLoginAt, String userImage) {
+        this.userId = userId;
         this.userName = userName;
         this.userEmail = userEmail;
         this.userPassword = userPassword;
         this.userBirth = userBirth;
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = createdAt;
         this.latestLoginAt = latestLoginAt;
         this.userImage = userImage;
     }
+
 }

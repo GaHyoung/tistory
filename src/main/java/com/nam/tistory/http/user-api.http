@@ -1,0 +1,35 @@
+### Get all users
+GET http://localhost:8080/api/user
+Accept: application/json
+
+### Add a new user
+POST http://localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "userName": "Nam",
+  "userEmail": "aaa@naver.com",
+  "userPassword": "password",
+  "userBirth": "20241204",
+  "createAt": "2024-08-07",
+  "latestLoginAt": "2024-08-07T10:00:00",
+  "userImage": "http://example.com/user1.jpg"
+}
+
+### Update an existing user
+PUT http://localhost:8080/api/user
+Content-Type: application/json
+
+{
+  "userName": "GaHyoung",
+  "userEmail": "aaa@naver.com",
+  "userPassword": "newpassword",
+  "userBirth": "19981204",
+  "createAt": "2024-08-09",
+  "latestLoginAt": "2024-08-07T10:00:00",
+  "userImage": "http://example.com/user1-updated.jpg"
+}
+
+### Delete a user
+DELETE http://localhost:8080/api/user
+X-USER-ID: aaa@naver.com
