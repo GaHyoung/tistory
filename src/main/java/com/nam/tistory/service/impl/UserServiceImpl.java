@@ -1,6 +1,6 @@
 package com.nam.tistory.service.impl;
 
-import com.nam.tistory.dto.UserRegisterDto;
+import com.nam.tistory.dto.UserDto;
 import com.nam.tistory.entity.User;
 import com.nam.tistory.exception.UserAlreadyExistException;
 import com.nam.tistory.exception.UserNotFoundException;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(UserRegisterDto userRegisterDto) {
+    public void saveUser(UserDto.Register userRegisterDto) {
         String userEmail = userRegisterDto.getUserEmail();
         if (userRepository.existsUserByUserEmail(userEmail)) {
             throw new UserAlreadyExistException("User already exist : " + userEmail);
@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void updateUser(UserRegisterDto userRegisterDto) {
+    public void updateUser(UserDto.Register userRegisterDto) {
         String userEmail = userRegisterDto.getUserEmail();
 
         Optional<User> optionalUser = userRepository.findUserByUserEmail(userEmail);

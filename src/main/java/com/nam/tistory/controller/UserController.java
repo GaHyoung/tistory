@@ -1,6 +1,6 @@
 package com.nam.tistory.controller;
 
-import com.nam.tistory.dto.UserRegisterDto;
+import com.nam.tistory.dto.UserDto;
 import com.nam.tistory.entity.User;
 import com.nam.tistory.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +23,13 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> addUser(@RequestBody UserRegisterDto userRegisterDto) {
+    public ResponseEntity<User> addUser(@RequestBody UserDto.Register userRegisterDto) {
         userService.saveUser(userRegisterDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PutMapping
-    public ResponseEntity<Void> updateUser(@RequestBody UserRegisterDto userRegisterDto) {
+    public ResponseEntity<Void> updateUser(@RequestBody UserDto.Register userRegisterDto) {
         userService.updateUser(userRegisterDto);
         return ResponseEntity.ok().build();
     }
