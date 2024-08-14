@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    dbcp2:
+      initial-size: 200
+      max-idle: 200
+      min-idle: 200
+      max-total: 200
+
+  jpa:
+    hibernate:
+      ddl-auto: none

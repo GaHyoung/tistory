@@ -1,0 +1,33 @@
+GET http://localhost:8080/api/post/1
+Accept: application/json
+
+### GET 요청 : 특정 게시물 가져오기
+GET http://localhost:8080/api/post/1/35
+Accept: application/json
+
+### POST 요청: 게시글 추가
+POST http://localhost:8080/api/post/1
+Content-Type: application/json
+X-USER-ID: aaa@naver.com
+
+{
+  "title": "Original Post Title",
+  "content": "first.",
+  "categoryNameList": ["A", "B"]
+}
+
+### PUT 요청: 게시글 업데이트
+PUT http://localhost:8080/api/post/1
+Content-Type: application/json
+X-USER-ID: aaa@naver.com
+
+{
+  "postId": 34,
+  "title": "Updated Post Title2",
+  "content": "Updated content of the post.2",
+  "categoryNameList": ["B", "C", "D"]
+}
+
+### DELETE 요청: 게시글 삭제
+DELETE http://localhost:8080/api/post/1/34
+X-USER-ID: aaa@naver.com

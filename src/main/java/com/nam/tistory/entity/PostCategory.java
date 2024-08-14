@@ -11,8 +11,14 @@ import java.io.Serializable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PostCategory {
 
+    public PostCategory(PostCategory.Pk pk, Category category, Post post) {
+        this.pk = pk;
+        this.category = category;
+        this.post = post;
+    }
+
     @EmbeddedId
-    private Pk pk;
+    private PostCategory.Pk pk;
 
     @MapsId("categoryId")
     @ManyToOne
@@ -27,6 +33,7 @@ public class PostCategory {
     @Embeddable
     @EqualsAndHashCode
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
+    @AllArgsConstructor
     public static class Pk implements Serializable {
         private Integer categoryId;
         private Long postId;

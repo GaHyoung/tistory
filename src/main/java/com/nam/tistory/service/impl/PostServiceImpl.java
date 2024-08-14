@@ -1,47 +1,112 @@
 package com.nam.tistory.service.impl;
 
-import com.nam.tistory.dto.PostRequestDto;
-import com.nam.tistory.entity.Blog;
-import com.nam.tistory.entity.Category;
-import com.nam.tistory.entity.Post;
-import com.nam.tistory.entity.User;
-import com.nam.tistory.repository.BlogRepository;
-import com.nam.tistory.repository.CategoryRepository;
-import com.nam.tistory.repository.PostRepository;
-import com.nam.tistory.repository.UserRepository;
+import com.nam.tistory.dto.PostDto;
+import com.nam.tistory.entity.*;
+import com.nam.tistory.exception.BlogNotFoundException;
+import com.nam.tistory.exception.CategoryNotFoundException;
+import com.nam.tistory.exception.PostNotFoundException;
+import com.nam.tistory.exception.UserNotFoundException;
+import com.nam.tistory.repository.*;
 import com.nam.tistory.service.PostService;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
+    private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
+    private final PostCategoryRepository postCategoryRepository;
 
     @Override
-    public void savePost(PostRequestDto postRequestDto, String userEmail, String blogName) {
+    @Transactional(readOnly = true)
+    public List<Post> getAllPosts(Long blogId) {
+        return postRepository.findPostByBlog_BlogId(blogId);
+    }
 
-        Category category = categoryRepository.findByCategoryName(postRequestDto.getCategoryName());
-        Blog blog = blogRepository.findBlogByBlogName(blogName);
-        Optional<User> user = userRepository.findUserByUserEmail(userEmail);
+    @Override
+    @Transactional(readOnly = true)
+    public Post getPost(Long blogId, Long postId) {
+        return postRepository.findPostByPostIdAndBlog_BlogId(postId, blogId)
+                .orElseThrow(() -> new PostNotFoundException("Post Not Found"));
+    }
+
+    @Override
+    public void savePost(PostDto.Register postRegisterDto, String userEmail, Long blogId) {
+
+        Blog blog = findBlogById(blogId);
+        User user = findUserByEmail(userEmail);
 
         Post post = Post.builder()
-                .postId(postRequestDto.getPostId())
-                .title(postRequestDto.getTitle())
-                .content(postRequestDto.getContent())
-                .category(category)
-                .user(user.get())
+                .title(postRegisterDto.getTitle())
+                .content(postRegisterDto.getContent())
+                .user(user)
                 .blog(blog)
                 .build();
-
         postRepository.save(post);
 
+        List<Category> categoryList = checkCategoryList(postRegisterDto.getCategoryNameList());
+        post.updateCategory(categoryList);
+
+        postCategoryRepository.saveAll(post.getPostCategories());
     }
+
+    @Override
+    public void updatePost(PostDto.Update postUpdateDto, String userEmail, Long blogId) {
+        Post existPost = postRepository.findPostByPostId(postUpdateDto.getPostId())
+                .orElseThrow(() -> new PostNotFoundException("Post not found"));
+
+        findBlogById(blogId);
+        findUserByEmail(userEmail);
+
+        List<Category> categoryList = checkCategoryList(postUpdateDto.getCategoryNameList());
+        existPost.updateTitleAndContent(postUpdateDto.getTitle(), postUpdateDto.getContent());
+        existPost.updateCategory(categoryList);
+
+        postCategoryRepository.deleteByPost_PostId(existPost.getPostId());
+        postCategoryRepository.saveAll(existPost.getPostCategories());
+    }
+
+    @Override
+    public void deletePost(Long blogId, Long postId) {
+        if (postRepository.findPostByPostIdAndBlog_BlogId(postId, blogId).isPresent()) {
+            postCategoryRepository.deleteByPost_PostId(postId);
+            postRepository.deleteById(postId);
+        } else {
+            throw new PostNotFoundException("Post not found");
+        }
+    }
+
+
+    private Blog findBlogById(Long blogId) {
+        return blogRepository.findById(blogId)
+                .orElseThrow(() -> new BlogNotFoundException("Blog Not Found"));
+    }
+
+    private User findUserByEmail(String userEmail) {
+        return userRepository.findUserByUserEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
+    public List<Category> checkCategoryList(List<String> requestCategoryNameList) {
+        List<Category> existCategoryNameList = categoryRepository.findByCategoryNameIn(requestCategoryNameList);
+        if (existCategoryNameList.isEmpty() ||
+                existCategoryNameList.size() != requestCategoryNameList.size()) {
+            throw new CategoryNotFoundException("Category not found");
+        }
+
+        return existCategoryNameList;
+    }
+
 }

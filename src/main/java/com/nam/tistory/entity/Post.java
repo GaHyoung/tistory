@@ -7,6 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -25,9 +28,8 @@ public class Post {
     @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
+    @OneToMany(mappedBy = "post")
+    private Set<PostCategory> postCategories = new HashSet<>(); //카테고리는 중복되면 안되니까 set
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -41,13 +43,32 @@ public class Post {
     private Blog blog;
 
     @Builder
-    public Post(Long postId, String title, String content, Category category, LocalDateTime createdAt, User user, Blog blog) {
+    public Post(Long postId, String title, String content, User user, Blog blog) {
         this.postId = postId;
         this.title = title;
         this.content = content;
-        this.category = category;
         this.createdAt = LocalDateTime.now();
         this.user = user;
         this.blog = blog;
+    }
+
+    public void addCategory(Category category) {
+        PostCategory postCategory = new PostCategory(
+                new PostCategory.Pk(category.getCategoryId(), this.postId),
+                category,
+                this);
+        this.postCategories.add(postCategory);
+    }
+
+    public void updateCategory(List<Category> categories) {
+        this.postCategories.clear();
+        for (Category category : categories) {
+            this.addCategory(category);
+        }
+    }
+
+    public void updateTitleAndContent(String title, String content) {
+        this.title = title;
+        this.content = content;
     }
 }
