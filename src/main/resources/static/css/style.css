@@ -1,0 +1,40 @@
+.layout {
+    width: 500px;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.layout input {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.layout textarea {
+    width: 100%;
+    margin-top: 10px;
+    min-height: 300px;
+}
+
+.table-border {
+    border: 1px solid;
+}
+
+.blue-font {
+    color: cadetblue;
+}
+
+#title {
+    font-size: 16px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#content {
+    font-size: 16px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    resize: vertical; /* 사용자가 텍스트 영역의 크기를 조절할 수 있게 함 */
+}
+

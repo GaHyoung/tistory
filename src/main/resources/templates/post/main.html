@@ -3,31 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <title>게시물 리스트</title>
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
 </head>
-<style>
-    .layout {
-        width: 500px;
-        margin: 0 auto;
-        margin-top: 40px;
-    }
-
-    .layout input {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .layout textarea {
-        width: 100%;
-        margin-top: 10px;
-        min-height: 300px;
-    }
-</style>
 <body>
 <div class="layout">
     <a th:href="@{/api/{blogId}/post/register(blogId = ${blogId})}">게시물 등록</a>
 </div>
 <div class="layout">
-    <table>
+    <table class="table-border">
         <thead>
         <tr>
             <th>글번호</th>
@@ -46,14 +29,6 @@
         </tbody>
     </table>
 
-<!--    <th:block th:each="page : ${#numbers.sequence(startPage, endPage)}">-->
-<!--        <a th:if="${page != nowPage}" th:href="@{/board/list(page = ${page - 1}, searchKeyword = ${param.searchKeyword})}" th:text="${page}"></a>-->
-<!--        <strong th:if="${page == nowPage}" th:text="${page}" style="color: red"></strong>-->
-<!--    </th:block>-->
-<!--    <form th:action="@{/post/list}" method="get">-->
-<!--        <input style="width: 130px;" type="text" name="searchKeyword">-->
-<!--        <button type="submit">검색</button>-->
-<!--    </form>-->
 </div>
 
 </body>
