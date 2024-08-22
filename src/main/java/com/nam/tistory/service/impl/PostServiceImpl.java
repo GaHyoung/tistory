@@ -9,9 +9,6 @@ import com.nam.tistory.exception.UserNotFoundException;
 import com.nam.tistory.repository.*;
 import com.nam.tistory.service.PostService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +19,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private static final Logger log = LoggerFactory.getLogger(PostServiceImpl.class);
     private final PostRepository postRepository;
     private final CategoryRepository categoryRepository;
     private final BlogRepository blogRepository;
@@ -63,8 +59,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void updatePost(PostDto.Update postUpdateDto, String userEmail, Long blogId) {
-        Post existPost = postRepository.findPostByPostId(postUpdateDto.getPostId())
+    public void updatePost(PostDto.Update postUpdateDto, String userEmail, Long blogId, Long postId) {
+        Post existPost = postRepository.findPostByPostId(postId)
                 .orElseThrow(() -> new PostNotFoundException("Post not found"));
 
         findBlogById(blogId);

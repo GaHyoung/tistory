@@ -2,53 +2,69 @@ package com.nam.tistory.controller;
 
 import com.nam.tistory.dto.PostDto;
 import com.nam.tistory.entity.Post;
-import com.nam.tistory.entity.User;
+import com.nam.tistory.service.CategoryService;
 import com.nam.tistory.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/post/{blogId}")
+@Controller
+@RequestMapping("/api/{blogId}/post")
 @RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final CategoryService categoryService;
 
-    @GetMapping
-    public ResponseEntity<List<Post>> getAllPosts(@PathVariable Long blogId) {
-        return ResponseEntity.ok(postService.getAllPosts(blogId));
+    @GetMapping("/list")
+    public String postList(@PathVariable Long blogId,
+                           Model model) {
+        List<Post> postList = postService.getAllPosts(blogId);
+        model.addAttribute("postList", postList);
+        model.addAttribute("blogId", blogId);
+        return "/post/main";
     }
 
-    @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPost(@PathVariable Long blogId,
-                                        @PathVariable Long postId) {
-        return ResponseEntity.ok(postService.getPost(blogId, postId));
+    @GetMapping("/view/{postId}")
+    public String viewPost(@PathVariable Long blogId,
+                           @PathVariable Long postId,
+                           Model model) {
+        Post post = postService.getPost(blogId, postId);
+        model.addAttribute("post", post);
+        return "/post/view";
     }
 
-    @PostMapping
-    public ResponseEntity<User> savePost(@RequestBody PostDto.Register postRegisterDto,
-                                         @RequestHeader("X-USER-ID") String userEmail,
-                                         @PathVariable Long blogId) {
+    @GetMapping("/register")
+    public String showRegisterPage(@PathVariable Long blogId, Model model) {
+        model.addAttribute("blogId", blogId);
+        model.addAttribute("categoryNameList", categoryService.getCategoryNameList(blogId));
+        return "/post/register";
+    }
+
+    @PostMapping("/register")
+    public String registerPost(@ModelAttribute PostDto.Register postRegisterDto,
+                               @PathVariable Long blogId,
+                               @RequestHeader("X-USER-ID") String userEmail) {
         postService.savePost(postRegisterDto, userEmail, blogId);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return "redirect:/api/{blogId}/post";
     }
 
-    @PutMapping
-    public ResponseEntity<Void> updatePost(@RequestBody PostDto.Update postUpdateDto,
-                                           @RequestHeader("X-USER-ID") String userEmail,
-                                           @PathVariable Long blogId) {
-        postService.updatePost(postUpdateDto, userEmail, blogId);
-        return ResponseEntity.ok().build();
+    @PutMapping("/view/{postId}/update")
+    public String updatePost(@ModelAttribute PostDto.Update postUpdateDto,
+                             @RequestHeader("X-USER-ID") String userEmail,
+                             @PathVariable Long blogId,
+                             @PathVariable Long postId) {
+        postService.updatePost(postUpdateDto, userEmail, blogId, postId);
+        return "redirect:/post/list";
     }
 
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long blogId,
-                                           @PathVariable Long postId) {
+    @DeleteMapping("/view/{postId}/delete")
+    public String deletePost(@PathVariable Long blogId,
+                             @PathVariable Long postId) {
         postService.deletePost(blogId, postId);
-        return ResponseEntity.ok().build();
+        return "redirect:/post/list";
     }
 
 }

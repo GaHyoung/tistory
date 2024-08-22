@@ -13,7 +13,7 @@ public interface PostService {
 
     void savePost(PostDto.Register postRegisterDto, String userEmail, Long blogId);
 
-    void updatePost(PostDto.Update postUpdateDto, String userEmail, Long blogId);
+    void updatePost(PostDto.Update postUpdateDto, String userEmail, Long blogId, Long postId);
 
     void deletePost(Long blogId, Long postId);
 
